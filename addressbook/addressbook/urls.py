@@ -15,12 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.contrib.auth.models import User
 from rest_framework_jwt.views import obtain_jwt_token
 from django.urls import re_path
 
 from user.views import UserCreate
-from user.serializers import UserSerializer
 from contact.views import ContactView, ContactListCreateView
 
 urlpatterns = [
