@@ -4,8 +4,6 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 
-import jwt
-
 from .serializers import ContactSerializer, ContactListSerializer
 from .models import Contact, ContactList
 from .decorators import parse_token_user_id
