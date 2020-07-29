@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import filters
 
 from .serializers import ContactSerializer, ContactListSerializer
 from .models import Contact, ContactList
@@ -48,7 +49,8 @@ class TokenedRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 class TokenedListCreateAPIView(generics.ListCreateAPIView):
     @parse_token_user_id
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().filter(user__id=kwargs['user_id'])
+        queryset = self.filter_queryset(
+            self.get_queryset()).filter(user__id=kwargs['user_id'])
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -87,4 +89,6 @@ class ContactListView(TokenedRetrieveUpdateDestroyAPIView):
 
 class ContactListListCreateView(TokenedListCreateAPIView):
     queryset = ContactList.objects.all()
-    serializer_class = ContactSerializer
+    serializer_class = ContactListSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']

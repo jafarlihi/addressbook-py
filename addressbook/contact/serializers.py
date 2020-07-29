@@ -11,4 +11,4 @@ class ContactSerializer(serializers.ModelSerializer):
 class ContactListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactList
-        fields = ('id', 'user', 'name', 'contacts')
+        fields = ('id', 'user', 'name')
