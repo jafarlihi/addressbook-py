@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,6 +14,14 @@ from .decorators import parse_token_user_id
 class ContactView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+
+    @parse_token_user_id
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user.id != kwargs['user_id']:
+            raise PermissionDenied
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class ContactListCreateView(generics.ListCreateAPIView):
