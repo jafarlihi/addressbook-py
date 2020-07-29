@@ -6,3 +6,9 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
         fields = ('user', 'name', 'value')
+
+
+class ContactListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ('user', 'name', 'contacts')

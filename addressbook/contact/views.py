@@ -6,15 +6,12 @@ from rest_framework import status
 
 import jwt
 
-from .serializers import ContactSerializer
-from .models import Contact
+from .serializers import ContactSerializer, ContactListSerializer
+from .models import Contact, ContactList
 from .decorators import parse_token_user_id
 
 
-class ContactView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Contact.objects.all()
-    serializer_class = ContactSerializer
-
+class TokenedRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     @parse_token_user_id
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -48,13 +45,10 @@ class ContactView(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ContactListCreateView(generics.ListCreateAPIView):
-    queryset = Contact.objects.all()
-    serializer_class = ContactSerializer
-
+class TokenedListCreateAPIView(generics.ListCreateAPIView):
     @parse_token_user_id
     def list(self, request, *args, **kwargs):
-        queryset = Contact.objects.filter(user__id=kwargs['user_id'])
+        queryset = self.get_queryset().filter(user__id=kwargs['user_id'])
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -74,3 +68,23 @@ class ContactListCreateView(generics.ListCreateAPIView):
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class ContactView(TokenedRetrieveUpdateDestroyAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+
+class ContactListCreateView(TokenedListCreateAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+
+class ContactListView(TokenedRetrieveUpdateDestroyAPIView):
+    queryset = ContactList.objects.all()
+    serializer_class = ContactListSerializer
+
+
+class ContactListListCreateView(TokenedListCreateAPIView):
+    queryset = ContactList.objects.all()
+    serializer_class = ContactSerializer

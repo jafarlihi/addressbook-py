@@ -19,12 +19,14 @@ from rest_framework_jwt.views import obtain_jwt_token
 from django.urls import re_path
 
 from user.views import UserCreate
-from contact.views import ContactView, ContactListCreateView
+from contact.views import ContactView, ContactListCreateView, ContactListListCreateView, ContactListView
 
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^api/users$', UserCreate.as_view()),
     re_path(r'^api/users/tokens$', obtain_jwt_token),
     path(r'api/contacts', ContactListCreateView.as_view()),
-    path(r'api/contacts/<int:pk>', ContactView.as_view())
+    path(r'api/contacts/<int:pk>', ContactView.as_view()),
+    path(r'api/contact-lists', ContactListListCreateView.as_view()),
+    path(r'api/contact-lists/<int:pk>', ContactListView.as_view())
 ]
