@@ -11,7 +11,7 @@ class Contact(models.Model):
     value = models.CharField(max_length=256)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['id']
 
 
 class ContactList(models.Model):
@@ -23,4 +23,4 @@ class ContactList(models.Model):
     contacts = models.ManyToManyField(Contact)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['id']
