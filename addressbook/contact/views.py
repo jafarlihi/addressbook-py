@@ -23,9 +23,11 @@ class TokenedRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     @parse_token_user_id
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
+
         instance = self.get_object()
         if instance.user.id != kwargs['user_id']:
             raise PermissionDenied
+
         serializer = self.get_serializer(
             instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
