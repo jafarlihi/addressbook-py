@@ -95,7 +95,6 @@ class ContactListListCreateView(TokenedListCreateAPIView):
 
 
 class ContactListContactsView(generics.GenericAPIView):
-    queryset = Contact.objects.all()
     serializer_class = ContactSerializer
 
     @parse_token_user_id
@@ -103,4 +102,32 @@ class ContactListContactsView(generics.GenericAPIView):
         contact_list = ContactList.objects.filter(pk=kwargs['pk']).first()
         if contact_list.user.id != kwargs['user_id']:
             raise PermissionDenied
-        return Response(contact_list.contacts.all())
+        return Response(self.get_serializer(contact_list.contacts.all(), many=True).data)
+
+
+class ContactListContactsAddDeleteView(generics.GenericAPIView):
+    @parse_token_user_id
+    def post(self, request, *args, **kwargs):
+        contact_list = ContactList.objects.filter(pk=kwargs['pk']).first()
+        if contact_list.user.id != kwargs['user_id']:
+            raise PermissionDenied
+
+        contact = Contact.objects.filter(pk=kwargs['contact_pk']).first()
+        if contact.user.id != kwargs['user_id']:
+            raise PermissionDenied
+
+        contact_list.contacts.add(contact)
+        return Response(status=200)
+
+    @parse_token_user_id
+    def delete(self, request, *args, **kwargs):
+        contact_list = ContactList.objects.filter(pk=kwargs['pk']).first()
+        if contact_list.user.id != kwargs['user_id']:
+            raise PermissionDenied
+
+        contact = Contact.objects.filter(pk=kwargs['contact_pk']).first()
+        if contact.user.id != kwargs['user_id']:
+            raise PermissionDenied
+
+        contact_list.contacts.remove(contact)
+        return Response(status=200)

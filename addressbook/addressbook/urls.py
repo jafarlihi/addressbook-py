@@ -21,7 +21,7 @@ from django.urls import re_path
 from user.views import UserCreate
 from contact.views import (ContactView, ContactListCreateView,
                            ContactListListCreateView, ContactListView,
-                           ContactListContactsView)
+                           ContactListContactsView, ContactListContactsAddDeleteView)
 
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
@@ -33,4 +33,6 @@ urlpatterns = [
     path(r'api/contact-lists/<int:pk>', ContactListView.as_view()),
     path(r'api/contact-lists/<int:pk>/contacts',
          ContactListContactsView.as_view()),
+    path(r'api/contact-lists/<int:pk>/contacts/<int:contact_pk>',
+         ContactListContactsAddDeleteView.as_view())
 ]
