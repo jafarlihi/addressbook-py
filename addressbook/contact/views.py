@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 from rest_framework import generics
 from rest_framework.response import Response
@@ -92,3 +92,15 @@ class ContactListListCreateView(TokenedListCreateAPIView):
     serializer_class = ContactListSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+
+
+class ContactListContactsView(generics.GenericAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+    @parse_token_user_id
+    def get(self, request, *args, **kwargs):
+        contact_list = ContactList.objects.filter(pk=kwargs['pk']).first()
+        if contact_list.user.id != kwargs['user_id']:
+            raise PermissionDenied
+        return Response(contact_list.contacts.all())
